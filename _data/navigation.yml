@@ -1,9 +1,6 @@
 # Menu navigation links
 - title: Code
-  url: http://www.baidu.com
-
-- title: Theme Setup
-  url: /theme-setup/
+  url: /code/
 
 # - title: External Link
 #   url: http://mademistakes.com
