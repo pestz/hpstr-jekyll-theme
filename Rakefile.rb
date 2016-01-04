@@ -6,6 +6,7 @@ require "stringex"
 
 public_dir      = "public"    # compiled site directory
 posts_dir       = "_posts"    # directory for blog files
+daily_dir       = "_daily"    # directory for daily blog files
 new_post_ext    = "md"  # default new post file extension when using the new_post task
 new_page_ext    = "md"  # default new page file extension when using the new_page task
 
@@ -31,6 +32,40 @@ task :new_post, :title do |t, args|
   open(filename, 'w') do |post|
     post.puts "---"
     post.puts "layout: post"
+    post.puts "title: \"#{title.gsub(/&/,'&amp;')}\""
+    post.puts "modified: #{Time.now.strftime('%Y-%m-%d %H:%M:%S %z')}"
+    post.puts "tags: [#{tags}]"
+    post.puts "image:"
+    post.puts "  feature: "
+    post.puts "  credit: "
+    post.puts "  creditlink: "
+    post.puts "comments: "
+    post.puts "share: "
+    post.puts "---"
+  end
+end
+
+#############################
+# Create a new daily or Page #
+#############################
+
+# usage rake new_post
+desc "Create a new post in #{daily_dir}"
+task :new_post, :title do |t, args|
+  if args.title
+    title = args.title
+  else
+    title = get_stdin("Enter a title for your daily: ")
+  end
+  filename = "#{daily_dir}/#{Time.now.strftime('%Y-%m-%d')}-#{title.to_url}.#{new_post_ext}"
+  if File.exist?(filename)
+    abort("rake aborted!") if ask("#{filename} already exists. Do you want to overwrite?", ['y', 'n']) == 'n'
+  end
+  tags = get_stdin("Enter tags to classify your daily (comma separated): ")
+  puts "Creating new daily: #{filename}"
+  open(filename, 'w') do |post|
+    post.puts "---"
+    post.puts "layout: daily"
     post.puts "title: \"#{title.gsub(/&/,'&amp;')}\""
     post.puts "modified: #{Time.now.strftime('%Y-%m-%d %H:%M:%S %z')}"
     post.puts "tags: [#{tags}]"
